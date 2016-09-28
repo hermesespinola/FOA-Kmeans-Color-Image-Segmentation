@@ -2,35 +2,28 @@ clc;
 clear;
 close all;
 
-problem.CostFunction = @(x) otra(x);  % The new cost function
-problem.nVar = 6;                     % Number of unknown (Decision) variables
-problem.VarMin = -10;
+problem.FitnessFunction = @(x) minimizeFunction(x);  % The new cost function
+problem.nVar = 6;                                    % dimensions of the problem
+problem.MinValue = -10;
+problem.MaxValue = 10;
 
-problem.VarMin =  0;  % Lower Bound of Decision Variables
-problem.VarMax =  1;   % Upper Bound of Decision Variables
-
-%% Parameters of PSO
-
-params.MaxIt = 100;        % Maximum Number of Iterations
-params.nPop = 50;           % Population Size (Swarm Size)
-params.w = 0.8;               % Intertia Coefficient
-params.wdamp = 0.90;        % Damping Ratio of Inertia Coefficient
-params.c1 = 1;              % Personal Acceleration Coefficient
-params.c2 = 2;              % Social Acceleration Coefficient
+params.InitialTrees = 10;
+params.LifeTime = 4;
+params.LSC = 3;
+params.GSC = 2;
+params.TransferRate = 0.2;
+params.MaxIter = 50;
+params.dLSC = 2;
+params.AreaLimit = 30;
 params.ShowIterInfo = false; % Flag for Showing Iteration Information
 
-%% Calling PSO
+%% Calling FOA
 
-out = pso(problem, params);
+out = FOA(problem, params);
 
-BestSol = out.BestSol;
-BestCosts = out.BestCosts;
+BestSol = out.Vals;
+BestFitness = out.Fitness;
 
 %% Results
 
-figure;
 
-semilogy(BestCosts, 'LineWidth', 2);
-xlabel('Iteration');
-ylabel('Best Cost');
-grid on;
