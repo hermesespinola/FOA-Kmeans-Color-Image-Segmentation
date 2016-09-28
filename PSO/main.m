@@ -2,7 +2,9 @@ clc;
 clear;
 close all;
 
-problem.CostFunction = @(x) otra(x);  % The new cost function
+addpath('../ObjectiveFunctions/'); % add the Objective Functions to the path
+
+problem.CostFunction = @(x) ObjFun2(x);  % The new cost function
 problem.nVar = 6;                     % Number of unknown (Decision) variables
 problem.VarMin = -10;
 

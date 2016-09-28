@@ -2,6 +2,8 @@ clc;
 clear;
 close all;
 
+addpath('../ObjectiveFunctions/'); % add the Objective Functions to the path
+
 CostFunction = @(x) func6(x);  % Cost Function
 
 maxIterations = 60;      %Stopping condition
