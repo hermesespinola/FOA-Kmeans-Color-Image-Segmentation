@@ -1,4 +1,4 @@
-function z = f(x)
+function z = minimizeFunction(x)
   A = [10 3 17 3.5 1.7 8;
        0.05 10 17 0.1 8 14;
        3 3.5 1.7 10 17 8;
