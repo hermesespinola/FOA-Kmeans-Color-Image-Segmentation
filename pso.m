@@ -4,18 +4,18 @@ function out = pso(problem, params)
   CostFunction = problem.CostFunction;  % Cost Function
   nVar = problem.nVar;                  % Number of unknow (Decision) variables (Dimensions)
 
-  VarSize = [1 nVar];             % Matrix size of Decision Variables (horizontal vector)
+  VarSize = [1 nVar];                   % Matrix size of Decision Variables (horizontal vector)
 
-  VarMin = problem.VarMin;	% Lower Bound of Decision Variables
-  VarMax = problem.VarMax;    % Upper Bound of Decision Variables
+  VarMin = problem.VarMin;	            % Lower Bound of Decision Variables
+  VarMax = problem.VarMax;              % Upper Bound of Decision Variables
 
   %% Parameters of PSO %%
-  MaxIt = params.MaxIt;           % Maximum Number of Iterations                    % Maximum number of iteration
-  nPop = params.nPop;             % Number of particles in the population (Swarm size)
-  w = params.w;                          % Inertia Coefficient (Weight)
-  wdamp = params.wdamp;                    % Damping Ratio of Inertia Coefficient
-  c1 = params.c1;                         % Personal Acceleration Coefficient
-  c2 = params.c2;                         % Social Acceleration Coefficient
+  MaxIt = params.MaxIt;                 % Maximum Number of iterations
+  nPop = params.nPop;                   % Number of particles in the population (Swarm size)
+  w = params.w;                         % Inertia Coefficient (Weight)
+  wdamp = params.wdamp;                 % Damping Ratio of Inertia Coefficient
+  c1 = params.c1;                       % Personal Acceleration Coefficient
+  c2 = params.c2;                       % Social Acceleration Coefficient
 
   % The Flag for Showing Iteration information
   ShowIterInfo = params.ShowIterInfo;
