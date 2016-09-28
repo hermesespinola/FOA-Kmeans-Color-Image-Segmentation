@@ -2,11 +2,9 @@ clc;
 clear;
 close all;
 
-addpath('../ObjectiveFunctions/'); % add the Objective Functions to the path
+CostFunction = @(x) func3(x);  % Cost Function
 
-CostFunction = @(x) func6(x);  % Cost Function
-
-maxIterations = 60;      %Stopping condition
+maxIterations = 40;      %Stopping condition
 minValue = -10;         %Lower limit of the space problem.
 maxValue = 10;          %Upper limit of the space problem.
 minLocalValue = -0.1;   %Lower limit for local seeding.
@@ -56,9 +54,7 @@ for i=1:maxIterations
              end
          end
          tree(j, 1) = tree(j, 1) + 1;
-      end
-      %initialTrees = size(tree, 1);
-      
+      end      
       
       %2.2 Population limiting
       for j=1:size(tree, 1)
@@ -83,8 +79,6 @@ for i=1:maxIterations
       if size(tree, 1) > areaLimit
           candidateList(end+1:end+size(tree, 1)-areaLimit, :) = tree(areaLimit+1:end, :);
           tree = tree(1:areaLimit, :);
-          %candidateList = [candidateList; tree(areaLimit+1:size(tree, 1), :)];
-          %tree = tree(setdiff(1:size(tree,1),[areaLimit+1, size(tree, 1)]),:);
       end
       
       
@@ -105,11 +99,7 @@ for i=1:maxIterations
           tree( sizeTree, : ) = newTree;
       end
       
-      %LIMITING CANDIDATE LIST
-      %candidateList = candidateList(1:20, :);
-      
       %2.4 Update best tree
-      %tree = sortrows(tree, maximaOrMinima*(nVar+2));
       tree(1, 1) = 0;
       
       bestTreeByIteration(i) = tree(1, nVar+2);
