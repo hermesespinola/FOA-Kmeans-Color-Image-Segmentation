@@ -2,19 +2,20 @@ clc;
 clear;
 close all;
 
-im = double(imread('icon.png'));
+global im;
+im = double(imread('csiro.png'));
 
-CostFunction = @(x, image) kmeans(x, image);  % Cost Function
+CostFunction = @(x) kmeans(x);  % Cost Function
 
-maxIterations = 6;      %Stopping condition
+maxIterations = 1;     %Stopping condition
 minValue = 0;           %Lower limit of the space problem.
 maxValue = 255;         %Upper limit of the space problem.
 minLocalValue = -5;     %Lower limit for local seeding.
 maxLocalValue = 5;      %Upper limit for local seeding.
 initialTrees = 30;      %Initial number of trees in the forest.
-nVar = 15;              %Number of clusters
+nVar = 3;               %Number of clusters
 lifeTime = 6;           %Limit age to be part of the candidate list.
-LSC = 3;                %Local seeding: Number of seeds by tree. MUST BE: LSC <= nVar.
+LSC = 3;                %Local seeding: Number of seeds by tree.
 areaLimit = 100;        %Limit of trees in the forest.
 transferRate = 0.01;    %Percentage of the trees in the candidate list that are going to global seed.
 GSC = 2;                %Global seeding: Number of variables to be replaced by random numbers. MUST BE: GSC <= nVar.
@@ -32,9 +33,9 @@ tree = [zeros(initialTrees, 1) round(minValue + rand(initialTrees, nVar)*(maxVal
 tree(:, :, 2) = [zeros(initialTrees, 1) round(minValue + rand(initialTrees, nVar)*(maxValue - minValue)) zeros(initialTrees, 1)];
 tree(:, :, 3) = [zeros(initialTrees, 1) round(minValue + rand(initialTrees, nVar)*(maxValue - minValue)) zeros(initialTrees, 1)];
 
-
 %2. Main loop
 for i=1:maxIterations
+        tic
       %2.1 Local seeding
       initialTrees = size(tree, 1);
       for j=1:initialTrees
@@ -73,10 +74,11 @@ for i=1:maxIterations
              tree(j, :, :) = [];
          end
       end
-      
-      %2.2.2 Sort tree according to fitness
+%       tree(1, :, :)
+%       2.2.2 Sort tree according to fitness
       for j=1:size(tree, 1)
-         tree(j, nVar+2, 1) = CostFunction( transpose(squeeze(tree(j, 2:(nVar+1), :))), im );
+%           disp(transpose(squeeze(tree(j, 2:(nVar+1), :))));
+         tree(j, nVar+2, 1) = CostFunction( transpose(squeeze(tree(j, 2:(nVar+1), :))));
          tree(j, nVar+2, 2) = tree(j, nVar+2, 1);
          tree(j, nVar+2, 3) = tree(j, nVar+2, 1);
       end
@@ -93,7 +95,6 @@ for i=1:maxIterations
          candidateList(size(candidateList, 1)+1:size(candidateList, 1)+size(tree, 1)-areaLimit, :, :) = tree(areaLimit+1:size(tree, 1), :, :);
           tree(areaLimit+1:size(tree, 1), :, :) = [];
       end
-      
       
       %2.3 Global seeding
       %2.3.1 Choose number of trees from candidate tree
@@ -121,16 +122,18 @@ for i=1:maxIterations
       
       %2.4 Update best tree
       tree(1, 1, 1) = 0;
-      bestTreeByIteration(i) = tree(1, nVar+2, 1);
       
+      bestTreeByIteration(i) = tree(1, nVar+2, 1);
+      toc
 end
 
-disp(bestTreeByIteration(1));
-disp(bestTreeByIteration(maxIterations));
+% disp(bestTreeByIteration(1));
+% disp(bestTreeByIteration(maxIterations));
 
 %Show info
 figure;
-semilogy(bestTreeByIteration, 'LineWidth', 2);
+plot(bestTreeByIteration, 'LineWidth', 2);
+% semilogy(bestTreeByIteration, 'LineWidth', 2);
 title 'Forest optimization algorithm for image clustering';
 xlabel('Iteration');
 ylabel('BestTreeCost');

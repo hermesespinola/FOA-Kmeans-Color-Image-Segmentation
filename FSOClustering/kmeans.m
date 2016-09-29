@@ -1,9 +1,10 @@
-function z = kmeans(x, image)
+function z = kmeans(x)
+global im;
   total = 0.0;
   for i=1:size(x, 2)
-    for k=1:size(image, 1)
-      for l=1:size(image, 2)
-          total = total + sum((x(:, i) - image(k, l, :)).^2);
+    for j=1:size(im, 1)
+      for k=1:size(im, 2)
+          total = total + sum((x(:, i) - im(j, k, :)).^2);
       end
     end
   end
