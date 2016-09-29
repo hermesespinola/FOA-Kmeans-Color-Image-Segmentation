@@ -4,11 +4,11 @@ close all;
 
 CostFunction = @(x) func2(x);  % Cost Function
 
-maxIterations = 2000;      %Stopping condition
+maxIterations = 100;   %Stopping condition
 minValue = -10;         %Lower limit of the space problem.
 maxValue = 10;          %Upper limit of the space problem.
-minLocalValue = -0.01;   %Lower limit for local seeding.
-maxLocalValue = 0.01;    %Upper limit for local seeding.
+minLocalValue = -0.01;  %Lower limit for local seeding.
+maxLocalValue = 0.01;   %Upper limit for local seeding.
 initialTrees = 30;      %Initial number of trees in the forest.
 nVar = 2;               %Number of variables to optimez.
 lifeTime = 6;           %Limit age to be part of the candidate list.
@@ -85,12 +85,12 @@ for i=1:maxIterations
       %2.3.1 Choose number of trees from candidate tree
       selectedTrees = floor(transferRate * size(candidateList, 1));
       % Select "Transfer Rate" percent trees from the candidate population
-      globalParents = randperm(size(selectedTrees, 1));
+      globalParents = randperm(selectedTrees);
       
       %2.3.1 Create new trees
-      for j=1:size(globalParents, 1)
+      for j=1:selectedTrees
           sizeTree = size(tree, 1)+1;
-          newTree = tree(globalParents(j), :);
+          newTree = candidateList(globalParents(1, j), :);
           newTree(1) = 0;
           for k=1:GSC
               randomVariable = round(2+rand(1)*(nVar-1));
@@ -114,6 +114,7 @@ end
 %Show info
 figure;
 semilogy(bestTreeByIteration, 'LineWidth', 2);
+title 'Forest optimization algorithm';
 xlabel('Iteration');
 ylabel('BestTreeCost');
 grid on;
