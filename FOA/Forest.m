@@ -2,22 +2,21 @@ clc;
 clear;
 close all;
 
-CostFunction = @(x) func3(x);  % Cost Function
+CostFunction = @(x) func2(x);  % Cost Function
 
-maxIterations = 40;      %Stopping condition
+maxIterations = 2000;      %Stopping condition
 minValue = -10;         %Lower limit of the space problem.
 maxValue = 10;          %Upper limit of the space problem.
-minLocalValue = -0.1;   %Lower limit for local seeding.
-maxLocalValue = 0.1;    %Upper limit for local seeding.
+minLocalValue = -0.01;   %Lower limit for local seeding.
+maxLocalValue = 0.01;    %Upper limit for local seeding.
 initialTrees = 30;      %Initial number of trees in the forest.
-nVar = 6;               %Number of variables to optimez.
+nVar = 2;               %Number of variables to optimez.
 lifeTime = 6;           %Limit age to be part of the candidate list.
 LSC = 3;                %Local seeding: Number of seeds by tree. MUST BE: LSC <= nVar.
 areaLimit = 100;        %Limit of trees in the forest.
 transferRate = 0.01;    %Percentage of the trees in the candidate list that are going to global seed.
 GSC = 2;                %Global seeding: Number of variables to be replaced by random numbers. MUST BE: GSC <= nVar.
 maximaOrMinima = 1;     %Set -1 for maxima or 1 for minima.
-lenCandidates = 0;      %Initial size of the candidateList
 candidateList = [];     %List of candidate trees.
 
 bestTreeByIteration = zeros(maxIterations, 1);   %List of best trees on each iteration
@@ -59,7 +58,7 @@ for i=1:maxIterations
       %2.2 Population limiting
       for j=1:size(tree, 1)
          %2.2.1 Remove trees with age bigger than life time and add them to candidate list
-         if j > size(tree, 1)   %Para que no cause error al disminuir tree drasticamente
+         if j > size(tree, 1)
             break;
          end
          if tree(j, 1) > lifeTime
@@ -84,12 +83,14 @@ for i=1:maxIterations
       
       %2.3 Global seeding
       %2.3.1 Choose number of trees from candidate tree
-      selectedTrees = round(transferRate * size(candidateList, 1));
+      selectedTrees = floor(transferRate * size(candidateList, 1));
+      % Select "Transfer Rate" percent trees from the candidate population
+      globalParents = randperm(size(selectedTrees, 1));
       
-      %2.3.1 Create new trees -modificar
-      for j=1:selectedTrees
+      %2.3.1 Create new trees
+      for j=1:size(globalParents, 1)
           sizeTree = size(tree, 1)+1;
-          newTree = tree(j, :);
+          newTree = tree(globalParents(j), :);
           newTree(1) = 0;
           for k=1:GSC
               randomVariable = round(2+rand(1)*(nVar-1));
@@ -97,6 +98,11 @@ for i=1:maxIterations
               newTree(randomVariable) = smallValue;
           end
           tree( sizeTree, : ) = newTree;
+      end
+      
+      %Limiting candidateList
+      if size(candidateList, 1) > 100/transferRate
+         candidateList(100/transferRate+1:size(candidateList), :) = []; 
       end
       
       %2.4 Update best tree
@@ -111,5 +117,3 @@ semilogy(bestTreeByIteration, 'LineWidth', 2);
 xlabel('Iteration');
 ylabel('BestTreeCost');
 grid on;
-
-
