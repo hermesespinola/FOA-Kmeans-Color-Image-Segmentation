@@ -4,7 +4,7 @@ close all;
 
 CostFunction = @(x) func2(x);  % Cost Function
 
-maxIterations = 100;   %Stopping condition
+maxIterations = 100;    %Stopping condition
 minValue = -10;         %Lower limit of the space problem.
 maxValue = 10;          %Upper limit of the space problem.
 minLocalValue = -0.01;  %Lower limit for local seeding.
@@ -12,7 +12,7 @@ maxLocalValue = 0.01;   %Upper limit for local seeding.
 initialTrees = 30;      %Initial number of trees in the forest.
 nVar = 2;               %Number of variables to optimez.
 lifeTime = 6;           %Limit age to be part of the candidate list.
-LSC = 3;                %Local seeding: Number of seeds by tree. MUST BE: LSC <= nVar.
+LSC = 3;                %Local seeding: Number of seeds by tree.
 areaLimit = 100;        %Limit of trees in the forest.
 transferRate = 0.01;    %Percentage of the trees in the candidate list that are going to global seed.
 GSC = 2;                %Global seeding: Number of variables to be replaced by random numbers. MUST BE: GSC <= nVar.
