@@ -3,11 +3,15 @@ clear;
 close all;
 
 global im;
-im = double(imread('csiro.png'));
+im = double(imread('icon.png'));
+im = imresize(im, [200 200]);
+row = size(im, 1);
+col = size(im, 2);
+im = reshape(im, [row*col 3]);
 
 CostFunction = @(x) kmeans(x);  % Cost Function
 
-maxIterations = 1;     %Stopping condition
+maxIterations = 50;     %Stopping condition
 minValue = 0;           %Lower limit of the space problem.
 maxValue = 255;         %Upper limit of the space problem.
 minLocalValue = -5;     %Lower limit for local seeding.
@@ -16,7 +20,7 @@ initialTrees = 30;      %Initial number of trees in the forest.
 nVar = 3;               %Number of clusters
 lifeTime = 6;           %Limit age to be part of the candidate list.
 LSC = 3;                %Local seeding: Number of seeds by tree.
-areaLimit = 100;        %Limit of trees in the forest.
+areaLimit = 50;         %Limit of trees in the forest.
 transferRate = 0.01;    %Percentage of the trees in the candidate list that are going to global seed.
 GSC = 2;                %Global seeding: Number of variables to be replaced by random numbers. MUST BE: GSC <= nVar.
 maximaOrMinima = 1;     %Set -1 for maxima or 1 for minima.
@@ -35,25 +39,28 @@ tree(:, :, 3) = [zeros(initialTrees, 1) round(minValue + rand(initialTrees, nVar
 
 %2. Main loop
 for i=1:maxIterations
-        tic
+      tic
       %2.1 Local seeding
       initialTrees = size(tree, 1);
       for j=1:initialTrees
          if tree(j, 1, 1) == 0     %2.1 If is a new tree
-             for k=1:LSC        %Creating LSC seeds
+             for k=1:LSC           %Creating LSC seeds
                  randomVariable = round(2+rand(1)*(nVar-1));
                  smallValue = round(minLocalValue+rand(1)*(maxLocalValue - minLocalValue));
                  sizeTree = size(tree, 1)+1;
                  newTree = tree(j, :, :);
                  newTree(1, 1, 1) = 0;
                  
-                 %Modifica sólo el componente R (el ultimo valor de newTree (1))
-                 if newTree(1, randomVariable, 1) + smallValue < minValue
-                     newTree(1, randomVariable, 1) = minValue;
-                 elseif newTree(1, randomVariable, 1) + smallValue > maxValue
-                     newTree(1, randomVariable, 1) = maxValue;
+                 %Random RGB variable
+                 randomRGB = randi([1 3]);
+                 
+                 %Modifica una variable RGB de un cluster
+                 if newTree(1, randomVariable, randomRGB) + smallValue < minValue
+                     newTree(1, randomVariable, randomRGB) = minValue;
+                 elseif newTree(1, randomVariable, randomRGB) + smallValue > maxValue
+                     newTree(1, randomVariable, randomRGB) = maxValue;
                  else
-                     newTree(1, randomVariable, 1) = newTree(1, randomVariable, 1) + smallValue;
+                     newTree(1, randomVariable, randomRGB) = newTree(1, randomVariable, randomRGB) + smallValue;
                  end
                  
                  tree( sizeTree, :, : ) = newTree;
@@ -74,21 +81,18 @@ for i=1:maxIterations
              tree(j, :, :) = [];
          end
       end
-%       tree(1, :, :)
-%       2.2.2 Sort tree according to fitness
+      
+      %2.2.2 Sort tree according to fitness
       for j=1:size(tree, 1)
-%           disp(transpose(squeeze(tree(j, 2:(nVar+1), :))));
-         tree(j, nVar+2, 1) = CostFunction( transpose(squeeze(tree(j, 2:(nVar+1), :))));
+         tree(j, nVar+2, 1) = CostFunction( squeeze(tree(j, 2:(nVar+1), :)) );
          tree(j, nVar+2, 2) = tree(j, nVar+2, 1);
          tree(j, nVar+2, 3) = tree(j, nVar+2, 1);
       end
-      
       %Sorting
       tree(:, :, 1) = sortrows(tree(:, :, 1), nVar+2);
       tree(:, :, 2) = sortrows(tree(:, :, 2), nVar+2);
       tree(:, :, 3) = sortrows(tree(:, :, 3), nVar+2);
       %End sorting
-      
       
       %2.2.3 Remove tree that exceed area limit and add them to candidate list
       if size(tree, 1) > areaLimit
@@ -107,10 +111,11 @@ for i=1:maxIterations
           newTree = candidateList(globalParents(1, j), :, :);
           newTree(1, 1, 1) = 0;
           for k=1:GSC
-              %Solo modifico el componente R
+              %Random RGB variable
+              randomRGB = randi([1 3]);
               randomVariable = round(2+rand(1)*(nVar-1));
               smallValue = round(minValue+rand(1)*(maxValue - minValue));
-              newTree(1, randomVariable, 1) = smallValue;
+              newTree(1, randomVariable, randomRGB) = smallValue;
           end
           tree( sizeTree, :, : ) = newTree;
       end
@@ -124,11 +129,9 @@ for i=1:maxIterations
       tree(1, 1, 1) = 0;
       
       bestTreeByIteration(i) = tree(1, nVar+2, 1);
-      toc
+      
+      disp(fprintf('Iteration: %d in time: %f', i, toc));
 end
-
-% disp(bestTreeByIteration(1));
-% disp(bestTreeByIteration(maxIterations));
 
 %Show info
 figure;
