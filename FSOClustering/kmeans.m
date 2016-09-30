@@ -1,4 +1,4 @@
 function z = kmeans(x)
     global im;
-    z = sum(min(dist(im, x)));
+    z = sum(min(transpose(dist(im, x))));
 end
