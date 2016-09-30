@@ -4,14 +4,15 @@ close all;
 
 global im;
 im = double(imread('icon.png'));
-im = imresize(im, [200 200]);
+imshow(im);
+im = imresize(im, [300 300]);
 row = size(im, 1);
 col = size(im, 2);
 im = reshape(im, [row*col 3]);
 
 CostFunction = @(x) kmeans(x);  % Cost Function
 
-maxIterations = 50;     %Stopping condition
+maxIterations = 10;     %Stopping condition
 minValue = 0;           %Lower limit of the space problem.
 maxValue = 255;         %Upper limit of the space problem.
 minLocalValue = -5;     %Lower limit for local seeding.
@@ -84,7 +85,7 @@ for i=1:maxIterations
       
       %2.2.2 Sort tree according to fitness
       for j=1:size(tree, 1)
-         tree(j, nVar+2, 1) = CostFunction( squeeze(tree(j, 2:(nVar+1), :)) );
+         tree(j, nVar+2, 1) = CostFunction( transpose(squeeze(tree(j, 2:(nVar+1), :))) );
          tree(j, nVar+2, 2) = tree(j, nVar+2, 1);
          tree(j, nVar+2, 3) = tree(j, nVar+2, 1);
       end
@@ -121,16 +122,14 @@ for i=1:maxIterations
       end
       
       %Limiting candidateList
-      if size(candidateList, 1) > 10/transferRate
-          candidateList(10/transferRate+1:size(candidateList), :, :) = [];
-      end
+      candidateList = [];
       
       %2.4 Update best tree
       tree(1, 1, 1) = 0;
       
       bestTreeByIteration(i) = tree(1, nVar+2, 1);
       
-      disp(fprintf('Iteration: %d in time: %f', i, toc));
+      disp(fprintf('Iteration: %d in time: %f cost: %f', i, toc, bestTreeByIteration(i)));
 end
 
 %Show info
@@ -139,5 +138,5 @@ plot(bestTreeByIteration, 'LineWidth', 2);
 % semilogy(bestTreeByIteration, 'LineWidth', 2);
 title 'Forest optimization algorithm for image clustering';
 xlabel('Iteration');
-ylabel('BestTreeCost');
+ylabel('Best tree cost');
 grid on;
