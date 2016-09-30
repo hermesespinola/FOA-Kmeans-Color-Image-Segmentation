@@ -4,7 +4,7 @@ close all;
 
 CostFunction = @(x) func2(x);  % Cost Function
 
-maxIterations = 100;    %Stopping condition
+maxIterations = 3000;     %Stopping condition
 minValue = -10;         %Lower limit of the space problem.
 maxValue = 10;          %Upper limit of the space problem.
 minLocalValue = -0.01;  %Lower limit for local seeding.
@@ -101,9 +101,7 @@ for i=1:maxIterations
       end
       
       %Limiting candidateList
-      if size(candidateList, 1) > 100/transferRate
-         candidateList(100/transferRate+1:size(candidateList), :) = []; 
-      end
+      candidateList = [];
       
       %2.4 Update best tree
       tree(1, 1) = 0;
@@ -113,8 +111,9 @@ end
 
 %Show info
 figure;
-semilogy(bestTreeByIteration, 'LineWidth', 2);
+%semilogy(bestTreeByIteration, 'LineWidth', 2);
+plot(bestTreeByIteration, 'LineWidth', 2);
 title 'Forest optimization algorithm';
 xlabel('Iteration');
-ylabel('BestTreeCost');
+ylabel('Best tree cost');
 grid on;
