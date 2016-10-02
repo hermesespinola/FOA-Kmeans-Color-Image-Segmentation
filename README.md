@@ -195,7 +195,7 @@ which is optimized by the Forest Optimization Algorithm. The flowchart
 of the hybrid FOA-KM is shown in figure1. The following are the steps
 used in hybrid FOA-KM algorithm.
 
-![](https://lh5.googleusercontent.com/lIIEIMLT63jXXO35W_GYX-VjKsU9SAA8a_eVfgm-D7j70lRvLNtAAhrZoVVJE1jfz4OE3_m2zS9d3D4=w1855-h917-rw)
+![Hybrid FOA-KM flowchart](https://lh6.googleusercontent.com/KVmDZcC6TZMsBXpGuz5ihEAjBlmzJsGt9wert1ds-zadzbh1ajtdFWaPSKrsEHF_FaYI7v870VIFNkw=w1855-h917-rw)
 
 #### Step 1. *Initialization*
 
